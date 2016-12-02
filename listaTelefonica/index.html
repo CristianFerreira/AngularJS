@@ -35,15 +35,24 @@
       {nome: "Marlon Furtado", telefone: "(51)988832223"}
     ];
 
+    $scope.operadoras = [
+      {nome: "oi", codigo:1, categoria: "Celular"},
+      {nome: "claro", codigo:2, categoria: "Celular"},
+      {nome: "TIM", codigo:3, categoria: "Celular"},
+      {nome: "vivo", codigo:4, categoria: "Celular"},
+      {nome: "GVT", codigo:5, categoria: "Fixo"},
+      {nome: "Embratel", codigo:6, categoria: "Fixo"}
+    ];
+
     $scope.adicionarContato = function(contato){
-         $scope.contatos.push(contato);
-         delete $scope.contato;
-         limparCampo();
+      $scope.contatos.push(contato);
+      delete $scope.contato;
+      limparCampo();
     };
 
     $scope.limparCampo = function(){
-        $scope.nome = "";
-        $scope.telefone = "";
+      $scope.nome = "";
+      $scope.telefone = "";
     };
   });
 
@@ -62,17 +71,22 @@
       <tr>
         <th>Nome</th>
         <th>Telefone</th>
+        <th>Operadora</th>
       </tr>
       <tr ng-repeat="contato in contatos">
         <td>{{contato.nome}}</td>
         <td>{{contato.telefone}}</td>
+        <td>{{contato.operadora.nome}}</td>
       </tr>
     </table>
   </hr>
   <input class="form-control" placeholder="Nome" type="text" ng-model="contato.nome" />
   <input class="form-control"  ui-mask="(99)99999-9999" type="text" ng-model="contato.telefone" />
-
-  <button class="btn btn-primary" ng-click="adicionarContato(contato);">Adicionar contato</button>
+  <select class="form-control" ng-options="operadora.nome group by operadora.categoria for operadora in operadoras" ng-model="contato.operadora">
+    <option value="">Selecione uma operadora</option>
+  </select>
+  {{contato}}
+  <button class="btn btn-primary" ng-disabled="!contato.nome || !contato.telefone" ng-click="adicionarContato(contato);">Adicionar contato</button>
 </div>
 
 </body>
