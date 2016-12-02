@@ -1,0 +1,168 @@
+<html ng-app="moduleForm">
+<head>
+  <title>Lista Telefonica</title>
+  <script src="angular.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="bower_components/angular-ui-mask/dist/mask.js"></script>
+    
+
+  <!-- Module e controller -->
+  <script>
+  angular.module("moduleForm", ['ui.mask']);
+
+  var formController = function() {
+      var model = this;
+    };
+
+    var compareTo = function() {
+      return {
+        require: "ngModel",
+        scope: {
+          otherModelValue: "=compareTo"
+        },
+        link: function(scope, element, attributes, ngModel) {
+
+          ngModel.$validators.compareTo = function(modelValue) {
+            return modelValue == scope.otherModelValue;
+          };
+
+          scope.$watch("otherModelValue", function() {
+            ngModel.$validate();
+          });
+        }
+      };
+    };
+
+
+  angular.module("moduleForm").directive("compareTo", compareTo);
+         
+  angular.module("moduleForm").controller("formController", function ($scope){    
+      
+  $scope.regexCnpj = /^\d{2}\.\d{3}\.\d{3}\/\d{4}\-\d{2}$/;
+  $scope.regexEmail = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+  $scope.submitForm = function(isValid){
+      if(isValid){
+        alert('Cadastro efetuado com sucesso!');
+        $scope.resetForm();
+      }else{
+        $scope.submitted = true;
+      }
+    };
+
+  $scope.resetForm = function(){
+      console.log("entrou");
+      $scope.form.$setPristine()
+      $scope.name = '';
+      $scope.cnpj = '';
+      $scope.email = '';
+      $scope.phone = '';
+      $scope.branch = '';
+      $scope.adress = '';
+      $scope.password = '';
+      $scope.confirmPassword = '';
+     
+    }
+  });
+  
+
+  </script>
+
+  <!-- CSS -->
+  <style>
+      h1{
+          text-align: center;
+      }      
+      
+  body{
+    padding-top: 50px;  
+    font-size: 14px;
+    color: #000;
+    font-family: sans-serif;
+  }
+
+  .txtError{
+    color: #e23939;
+  }
+      
+      .float-right{
+              float: right;
+      }
+  </style>
+</head>
+
+<body>
+  <div ng-controller="formController">
+    <div class="container">  
+        <div class="page-header"><h1>Validando Formulario com AngularJS</h1></div>
+        <form name="form" ng-submit="submitForm(form.$valid)" novalidate>
+        
+          <div class="col-sm-6">   
+          <div class="form-group" ng-class="{'has-error':form.name.$error.required && !form.name.$pristine && submitted || form.name.$error.maxlength && submitted }">
+            <label>Nome:</label>
+            <input name="name" class="form-control" ng-model="name" ng-maxlength="50" placeholder="Ex. Aceleradora 10" required>
+            <span class="txtError"ng-show="form.name.$error.required && !form.name.$pristine">Campo name é obrigatório.</span>
+            <span class="txtError" ng-show="form.name.$error.maxlength">Campo name deve ter no máximo 50 caracteres</span>
+          </div>
+          <div class="form-group"  ng-class="{'has-error':form.cnpj.$error.required && !form.cnpj.$pristine && submitted || form.cnpj.$error.pattern && submitted }">
+            <label>CNPJ:</label>
+            <input name="cnpj" ng-pattern="regexCnpj" class="form-control" ng-model="cnpj" ui-mask="99.999.999/9999-99"  required>
+            <span class="txtError" ng-show="form.cnpj.$error.required && !form.cnpj.$pristine">Campo CNPJ é obrigatório.</span>
+            <span class="txtError" ng-show="form.cnpj.$error.pattern">CNPJ inválido.</span>
+          </div>
+          <div class="form-group" ng-class="{'has-error':form.email.$error.required && !form.email.$pristine && submitted || form.email.$error.email && submitted  }">
+            <label>Email:</label>
+            <input name="email" ng-pattern="regexEmail" class="form-control" ng-model="email" ng-maxlength="50" placeholder="Ex. aceleradora10@gmail.com" required>
+            <span class="txtError" ng-show="form.email.$error.required && !form.email.$pristine">Campo email é obrigatório.</span>
+            <span class="txtError" ng-show="form.email.$error.pattern">E-mail invalido</span>
+
+          </div>
+          <div class="form-group" ng-class="{'has-error':form.phone.$error.required && !form.phone.$pristine && submitted}">
+            <label>Telefone:</label>
+            <input name="phone" class="form-control" ng-model="phone" ui-mask="(99)9999-9999" required />
+            <span class="txtError" ng-show="form.phone.$error.required && !form.phone.$pristine">Campo telefone é obrigatório.</span>
+          </div>
+            </div>
+             <div class="col-sm-6">
+          <div class="form-group" >
+            <label>Ramal:</label>
+            <input name="branch" class="form-control" ng-model="branch" ui-mask="9999">
+          </div>
+          <div class="form-group" ng-class="{'has-error':form.adress.$error.required && !form.adress.$pristine && submitted}">
+            <label>Endereço:</label>
+            <input name="adress" class="form-control" ng-model="adress" placeholder="Ex. Av.Ipiranga, 6681" required />
+            <span class="txtError" ng-show="form.adress.$error.required && !form.adress.$pristine">Campo endereço é obrigatório.</span>
+
+          </div>
+            
+            <div class="form-group" ng-class="{'has-error':form.password.$error.required && !form.password.$pristine && submitted}">
+            <label>Senha:</label>
+            <input type="password" name="password" class="form-control" ng-model="password" required />
+            <span class="txtError" ng-show="form.password.$error.required && !form.password.$pristine">Campo senha é obrigatório.</span>
+
+            </div>
+        <div class="form-group"  ng-class="{'has-error':form.confirmPassword.$error.compareTo && !form.confirmPassword.$pristine && submitted}">
+            <label>Confirmar Senha:</label>
+            <input type="password" name="confirmPassword" class="form-control"
+                   ng-model="confirmPassword"
+                   required compare-to="password" />
+            <span class="txtError" ng-show="form.confirmPassword.$error.compareTo && !form.confirmPassword.$pristine && form.confirmPassword">Senhas não correspondem.</span>
+        </div>
+                 <div class="float-right">
+                 <button ng-disabled="form.$invalid" type="submit" class="btn btn-lg btn-success">Cadastrar</button>
+                     </div>
+                 </div>
+         
+          
+            
+        </form>
+      
+    </div>
+</div>
+
+
+  </body>
+  </html>

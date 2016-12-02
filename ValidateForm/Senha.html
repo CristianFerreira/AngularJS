@@ -1,0 +1,74 @@
+<html ng-app="validation">
+
+  <head>
+    <script src="angular.min.js"></script>
+  <script type="text/javascript" src="bower_components/angular/angular.js"></script>
+  <script type="text/javascript" src="bower_components/angular-password/angular-password.js"></script>
+  <script type="text/javascript" src="node_modules/angular-messages/angular-messages.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+    <script>
+
+    var app = angular.module("validation", ["ngMessages"]);
+
+    var RegistrationController = function() {
+      var model = this;
+    };
+
+    var compareTo = function() {
+      return {
+        require: "ngModel",
+        scope: {
+          otherModelValue: "=compareTo"
+        },
+        link: function(scope, element, attributes, ngModel) {
+
+          ngModel.$validators.compareTo = function(modelValue) {
+            return modelValue == scope.otherModelValue;
+          };
+
+          scope.$watch("otherModelValue", function() {
+            ngModel.$validate();
+          });
+        }
+      };
+    };
+
+
+    app.directive("compareTo", compareTo);
+
+    app.controller("RegistrationController", RegistrationController);
+
+    </script>
+  </head>
+
+  <body class="container" ng-controller="RegistrationController as registration">
+    <h1>Register!</h1>
+    <h3>{{ registration.message }}</h3>
+    <form name="registrationForm" novalidate
+          ng-submit="registration.submit(registrationForm.$valid)">
+       <div class="form-group">
+            <label>User Name</label>
+            <input type="text" name="username" class="form-control" ng-model="registration.user.username" required />
+
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" class="form-control" ng-model="registration.user.password" required />
+            <span class="txtError" ng-show="registrationForm.password.$error && registrationForm.password.$error.$pristine">Campo telefone é obrigatório.</span>
+
+        </div>
+        <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" name="confirmPassword" class="form-control"
+                   ng-model="registration.user.confirmPassword"
+                   required compare-to="registration.user.password" />
+            <span class="txtError" ng-show="registrationForm.confirmPassword.$error.compareTo && !registrationForm.confirmPassword.$pristine">Campo telefone é obrigatório.</span>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Register!</button>
+        </div>
+    </form>
+  </body>
+
+</html>
