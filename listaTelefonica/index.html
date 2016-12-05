@@ -2,93 +2,20 @@
 <head>
   <meta charset="UTF-8">
   <title>Lista Telefonica</title>
-  <script src="angular.min.js"></script>
-  <script type="text/javascript" src="bower_components/angular-ui-mask/dist/mask.js"></script>
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="css/app.css">
 
-  <style>
-  .jumbotron{
-    width: 400px;
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 50px;
-  }
-
-  .table{
-    margin-top: 20px;
-  }
-
-  .form-control{
-    margin-bottom: 5px;
-  }
-
-  .title{
-    margin-bottom: 20px;
-  }
-
-  .selecionado{
-    background-color: yellow;
-  }
-  .negrito{
-    font-weight: bold;
-  }
-
-  .error{
-     color: #e23939;
-     display: flex;
-     padding-bottom: 5px;
-  }
-  </style>
-
-  <script>
-  angular.module("listaTelefonica",['ui.mask']);
-  angular.module("listaTelefonica").controller("listaTelefonicaController", function($scope){
-    $scope.titulo = "Lista Telefonica";
-    $scope.contatos = [
-      {nome: "Cristian", telefone:"9999-9999"},
-      {nome: "Thais", telefone:"9999-9999"},
-    ];
-
-    $scope.operadoras = [
-      {nome: "oi", codigo:1, categoria: "Celular"},
-      {nome: "claro", codigo:2, categoria: "Celular"},
-      {nome: "TIM", codigo:3, categoria: "Celular"},
-      {nome: "vivo", codigo:4, categoria: "Celular"},
-      {nome: "GVT", codigo:5, categoria: "Fixo"},
-      {nome: "Embratel", codigo:6, categoria: "Fixo"}
-    ];
-
-    $scope.ordernarPor = function(campo){
-        $scope.criterioDeBusca = campo;
-        $scope.direcaoDaOrdenacao = !$scope.direcaoDaOrdenacao;
-    };
-
-    $scope.adicionarContato = function(contato){
-      $scope.contatos.push(contato);
-      delete $scope.contato;
-      $scope.contatoForm.$setPristine();
-
-    };
-
-    $scope.apagarContato = function(contatos){
-        $scope.contatos = contatos.filter(function(contato){
-           if(!contato.selecionado) return contato;
-        });
-    };
-
-    $scope.isContatoSelecionado = function(contatos){
-        return contatos.some(function(contato){
-          return contato.selecionado;
-        });
-    };
-  });
-
-
-
-  </script>
-
+  <script src="lib/angular.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/controllers/operadorasAPIService.js"></script>
+  <script src="js/controllers/contatosAPIService.js"></script>
+  <script src="js/value/configValue.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services/serialGenerator.js"></script>
+  <script src="js/controllers/listaTelefonicaController.js"></script>
+  <script type="text/javascript" src="lib/bower_components/angular-ui-mask/dist/mask.js"></script>
 </head>
 
 <body ng-controller="listaTelefonicaController">
@@ -98,12 +25,14 @@
     <table ng-show="contatos.length > 0" class="table">
       <tr>
         <th></th>
+        <th>Serial</th>
         <th><a href="" ng-click="ordernarPor('nome');">Nome</a></th>
         <th><a href="" ng-click="ordernarPor('telefone');">Telefone</a></th>
         <th>Operadora</th>
       </tr>
       <tr ng-class="{'selecionado negrito': contato.selecionado}" ng-repeat="contato in contatos | filter:busca | orderBy:criterioDeBusca:direcaoDaOrdenacao">
         <td><input type="checkbox" ng-model="contato.selecionado"/></td>
+        <td>{{contato.serial}}</td>
         <td>{{contato.nome | uppercase}}</td>
         <td>{{contato.telefone}}</td>
         <td>{{contato.operadora.nome | lowercase}}</td>
