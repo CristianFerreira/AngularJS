@@ -1,24 +1,19 @@
-angular.module("listaTelefonica").controller("listaTelefonicaController", function($scope, contatosAPI, operadorasAPI, serialGenerator){
+angular.module("listaTelefonica").controller("listaTelefonicaController", function ($scope, $http){
   $scope.titulo = "Lista Telefonica";
   $scope.contatos = [];
 
-  $scope.operadoras = [
-    {nome: "oi", codigo:1, categoria: "Celular"},
-    {nome: "claro", codigo:2, categoria: "Celular"},
-    {nome: "TIM", codigo:3, categoria: "Celular"},
-    {nome: "vivo", codigo:4, categoria: "Celular"},
-    {nome: "GVT", codigo:5, categoria: "Fixo"},
-    {nome: "Embratel", codigo:6, categoria: "Fixo"}
-  ];
+  $scope.operadoras = [];
 
   var carregarContatos = function(){
-      contatosAPI.getContatos().success(function (data){
+      $http.get("http://localhost:3412/contatos").success(function (data){
+         console.log(data);
          $scope.contatos = data;
       });
   };
 
   var carregarOperadoras = function(){
-     operadorasAPI.getOperadoras().success(function(data){
+     $http.get("http://localhost:3412/operadoras").success( function (data){
+       console.log(data);
        $scope.operadoras = data;
      }).error(function(data, status){
          $scope.message = "Aconteceu um problema" + data;
@@ -31,7 +26,7 @@ angular.module("listaTelefonica").controller("listaTelefonicaController", functi
   };
 
   $scope.adicionarContato = function(contato){
-    contato.serial = serialGenerator.generate();
+    // contato.serial = serialGenerator.generate();
       contatosAPI.saveContato(contato).success(function(data){
       delete $scope.contato;
       $scope.contatoForm.$setPristine();
@@ -52,4 +47,7 @@ angular.module("listaTelefonica").controller("listaTelefonicaController", functi
         return contato.selecionado;
       });
   };
+
+  carregarContatos();
+  carregarOperadoras();
 });

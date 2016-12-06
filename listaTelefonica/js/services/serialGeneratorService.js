@@ -7,7 +7,7 @@ angular.module("listaTelefonica").provider("serialGenerator", function (){
               serial += String.fromCharCode(Math.floor(Math.random() * 64) + 32);
             }
             return serial;
-          };
+          }
       };
     };
 });
